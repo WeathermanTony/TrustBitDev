@@ -7,3 +7,9 @@
 [33mPress CTRL+C to quit[0m
 192.168.0.101 - - [27/Jun/2025 02:06:46] "GET / HTTP/1.1" 200 -
 192.168.0.101 - - [27/Jun/2025 03:02:28] "GET / HTTP/1.1" 200 -
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 8000 is in use by another program. Either identify and stop that program, or start the server with a different port.
+192.168.0.101 - - [27/Jun/2025 03:13:28] code 400, message Bad request version ("¬J\x1bYJdÔb\x7f5Ã\x15\x9cÙó^¹ø¸\x17\x8b\x04ÊóÀ\x9f'â\x00S|î\x00>\x13\x02\x13\x03\x13\x01À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ")
+192.168.0.101 - - [27/Jun/2025 03:13:28] "[31m[1m\x16\x03\x01\x02\x00\x01\x00\x01ü\x03\x03ÿ\x98;\x92<¨xKæ£l\x97­:Åº[\x1dð¶\x0b\x89¹Ö(\x81{¶\x11Ä\x09  ¬J\x1bYJdÔb\x7f5Ã\x15\x9cÙó^¹ø¸\x17\x8b\x04ÊóÀ\x9f'â\x00S|î\x00>\x13\x02\x13\x03\x13\x01À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ[0m" 400 -
