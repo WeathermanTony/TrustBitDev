@@ -1,6 +1,7 @@
 from flask import Flask, request
 from google.cloud import secretmanager
 import time
+import requests
 from prometheus_client import Counter, Gauge, generate_latest
 from functools import wraps
 
@@ -86,6 +87,33 @@ def truth():
         'wikipedia_token': get_secret('trustbit-wikipedia-token')
     }
     return {'truth': {k: v[:4] + '...' if not v.startswith('Error') else v for k, v in secrets.items()}}
+
+@app.route('/query', methods=['POST'])
+def query():
+    requests_count.inc()
+    uptime_gauge.set(int(time.time() - start_time))
+    data = request.get_json()
+    query = data.get('query', '')
+
+    newsapi_key = get_secret('trustbit-newsapi-key')
+    serpapi_key = get_secret('trustbit-serpapi-key')
+
+    news_results = []
+    serp_results = []
+
+    try:
+        news_response = requests.get(f'https://newsapi.org/v2/everything?q={query}&apiKey={newsapi_key}')
+        news_results = [article['title'] for article in news_response.json().get('articles', [])[:2]]
+    except Exception as e:
+        news_results = [f'NewsAPI error: {str(e)}']
+
+    try:
+        serp_response = requests.get(f'https://serpapi.com/search?query={query}&api_key={serpapi_key}')
+        serp_results = [result['title'] for result in serp_response.json().get('organic_results', [])[:2]]
+    except Exception as e:
+        serp_results = [f'SerpApi error: {str(e)}']
+
+    return {'news': news_results, 'serp': serp_results}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8001)

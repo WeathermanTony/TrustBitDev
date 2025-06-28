@@ -1,6 +1,7 @@
 flask==3.1.1
 prometheus_client
 google-cloud-secret-manager
+requests
 pytest
 black
 ruff
