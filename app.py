@@ -1,25 +1,54 @@
-from flask import Flask
+from flask import Flask, request
 import time
+from prometheus_client import Counter, Gauge, generate_latest
+from functools import wraps
 
 app = Flask(__name__)
-requests_count = 0
+requests_count = Counter('trustbit_requests_total', 'Total requests')
+uptime_gauge = Gauge('trustbit_uptime_seconds', 'Server uptime')
 start_time = time.time()
+
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if auth and auth.username == 'admin' and auth.password == 'trustbit123':
+            return f(*args, **kwargs)
+        return {'error': 'Unauthorized'}, 401
+    return decorated
 
 @app.route('/')
 def hello():
+    requests_count.inc()
+    uptime_gauge.set(int(time.time() - start_time))
     return 'TrustBit Dev Server'
 
 @app.route('/health')
 def health():
-    global requests_count
-    requests_count += 1
+    requests_count.inc()
+    uptime_gauge.set(int(time.time() - start_time))
     return {'status': 'healthy'}
 
 @app.route('/metrics')
 def metrics():
-    global requests_count
-    requests_count += 1
-    return {'uptime': int(time.time() - start_time), 'requests': requests_count}
+    requests_count.inc()
+    uptime_gauge.set(int(time.time() - start_time))
+    return generate_latest(), 200, {'Content-Type': 'text/plain'}
+
+@app.route('/search', methods=['POST'])
+def search():
+    requests_count.inc()
+    uptime_gauge.set(int(time.time() - start_time))
+    data = request.get_json()
+    query = data.get('query', '')
+    return {'results': [f'result1 for {query}', f'result2 for {query}']}
+
+@app.route('/vault')
+@require_auth
+def vault():
+    requests_count.inc()
+    uptime_gauge.set(int(time.time() - start_time))
+    return {'data': 'secure data'}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8001)
