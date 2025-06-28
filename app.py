@@ -10,7 +10,7 @@ uptime_gauge = Gauge('trustbit_uptime_seconds', 'Server uptime')
 start_time = time.time()
 
 client = secretmanager.SecretManagerServiceClient()
-project_id = 'your-project-id' # REMINDER: Replace with your Google Cloud project ID
+project_id = 'trustbit-463123' # REMINDER: Replace with your Google Cloud project ID
 
 def require_auth(f):
     @wraps(f)
